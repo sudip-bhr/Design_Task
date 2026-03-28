@@ -111,18 +111,25 @@ export function Stats() {
 
   return (
     <section className="relative w-full bg-white max-w-[1216px] mx-auto py-16 sm:py-24 px-4 font-outfit">
+      
+      {/* Injecting the Key-Turn Micro-Animation CSS */}
+      <style>{`
+        @keyframes key-turn-unlatch {
+          0% { transform: scale(1) rotate(0deg); }
+          30% { transform: scale(0.96) rotate(-2deg); }
+          70% { transform: scale(0.96) rotate(2deg); }
+          100% { transform: scale(1) rotate(0deg); }
+        }
+        .animate-key-turn {
+          animation: key-turn-unlatch 150ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+      `}</style>
+
       {/* --- Enhancement #7: Section Heading --- */}
       <div 
         ref={headerReveal.ref as React.RefObject<HTMLDivElement>}
         className={`text-center mb-12 sm:mb-16 reveal ${headerReveal.isVisible ? 'active' : ''}`}
       >
-        <div className="inline-flex items-center gap-3 mb-4">
-          <div className="h-[2px] w-8 bg-[#C33241] rounded-full" />
-          <span className="text-[#C33241] font-semibold text-sm tracking-widest uppercase">
-            Your Progress
-          </span>
-          <div className="h-[2px] w-8 bg-[#C33241] rounded-full" />
-        </div>
         <h2 className="font-nohemi font-bold text-3xl sm:text-4xl md:text-[48px] text-[#1A1A1A] leading-tight mb-3">
           Stats Overview
         </h2>
@@ -164,12 +171,20 @@ export function Stats() {
               <div
                 onClick={() => setActiveId(stat.id)}
                 className={`relative h-[380px] sm:h-[420px] md:h-[461px] rounded-[24px] sm:rounded-[32px] overflow-hidden cursor-pointer
-                  transition-all duration-[800ms]
+                  transition-all duration-[900ms]
                   ${isActive
-                    ? 'w-[320px] sm:w-[440px] md:w-[592px] bg-[#C33241] shadow-2xl scale-[1.02]'
-                    : 'w-[320px] sm:w-[220px] md:w-[280px] bg-[#C33241] shadow-md hover:shadow-lg scale-100 hover:scale-[1.01]'
+                    ? 'w-[320px] sm:w-[440px] md:w-[592px] bg-[#C33241] shadow-2xl animate-key-turn'
+                    : 'w-[320px] sm:w-[220px] md:w-[280px] bg-[#C33241] shadow-md hover:shadow-lg'
                   }`}
-                style={{ transitionTimingFunction: 'var(--ease-premium)' }}
+                style={{ 
+                  // Heavy mechanical swing cubic-bezier (negative wind-up, aggressive overshoot)
+                  transitionProperty: 'width, background-color, box-shadow, transform',
+                  transitionDelay: isActive ? '150ms' : '0ms', // 150ms delay for the key-turn to finish
+                  transitionTimingFunction: 'cubic-bezier(0.5, -0.35, 0.15, 1.25)',
+                  transform: isActive ? 'scale(1.02) rotate(0.5deg)' : 'scale(1) rotate(0deg)',
+                  perspective: '1400px', // Required for the 3D content flip
+                  transformStyle: 'preserve-3d'
+                }}
               >
                 {/* Pink overlay for inactive state */}
                 <div
@@ -183,8 +198,17 @@ export function Stats() {
 
                 {/* ===== ACTIVE STATE CONTENT ===== */}
                 <div
-                  className={`absolute inset-0 flex flex-col transition-opacity duration-500
-                    ${isActive ? 'opacity-100 z-10 delay-100' : 'opacity-0 z-0 pointer-events-none'}`}
+                  className="absolute inset-0 flex flex-col"
+                  style={{
+                    opacity: isActive ? 1 : 0,
+                    // The "Hinge Reveal": Starts folded 90deg flat into the ceiling, then drops and locks into place
+                    transform: isActive ? 'rotateX(0deg) scale(1) translateY(0)' : 'rotateX(90deg) scale(0.9) translateY(-60px)',
+                    transformOrigin: 'top center',
+                    transition: 'all 0.85s cubic-bezier(0.3, 1.2, 0.4, 1)', // Bouncy follow-through drop
+                    transitionDelay: isActive ? '0.35s' : '0s', // Waits 150ms (key-turn) + 200ms (card wind-up swing)
+                    pointerEvents: isActive ? 'auto' : 'none',
+                    zIndex: isActive ? 10 : 0
+                  }}
                 >
                   {/* Top row: View all Courses button */}
                   <div className="flex justify-end pt-[28px] sm:pt-[36px] pr-[28px] sm:pr-[36px]">
@@ -224,8 +248,16 @@ export function Stats() {
 
                 {/* ===== INACTIVE STATE CONTENT ===== */}
                 <div
-                  className={`absolute inset-0 flex flex-col transition-opacity duration-500
-                    ${!isActive ? 'opacity-100 z-10 delay-200' : 'opacity-0 z-0 pointer-events-none'}`}
+                  className="absolute inset-0 flex flex-col"
+                  style={{
+                    opacity: !isActive ? 1 : 0,
+                    // Trapdoor fall: Immediately swings -90deg back into the floor
+                    transform: !isActive ? 'rotateX(0deg) scale(1) translateY(0)' : 'rotateX(-90deg) scale(0.8) translateY(60px)',
+                    transformOrigin: 'bottom center',
+                    transition: 'all 0.6s cubic-bezier(0.5, -0.35, 0.15, 1)', // Fast aggressive fall mirroring the juggle
+                    pointerEvents: !isActive ? 'auto' : 'none',
+                    zIndex: !isActive ? 10 : 0
+                  }}
                 >
                   {/* On mobile inactive: horizontal layout. On md+: vertical rotated text */}
                   <div className="flex-1 flex items-center justify-center relative">
