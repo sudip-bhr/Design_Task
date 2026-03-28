@@ -138,48 +138,49 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
           zIndex: 20
         }}
       >
-        {/* Ticket Edge Cutouts for the Second Card (Req 4/5) */}
+        {/* ---- Second Card Only: Internal hole-punch arrow buttons ---- */}
         {index === 1 && hoverImages && hoverImages.length > 1 && (
-            <>
-              {/* Left Cutout - Bigger and Smoother */}
-              <div className="absolute left-[-44px] top-1/2 -translate-y-1/2 w-[88px] h-[88px] rounded-full bg-white pointer-events-none z-10 shadow-[inset_-3px_0_8px_rgba(0,0,0,0.06)]" />
-              {/* Right Cutout - Bigger and Smoother */}
-              <div className="absolute right-[-44px] top-1/2 -translate-y-1/2 w-[88px] h-[88px] rounded-full bg-white pointer-events-none z-10 shadow-[inset_3px_0_8px_rgba(0,0,0,0.06)]" />
-            </>
-        )}
-
-        {/* Nav Arrows on Outer Edges for Slider - Vertically Centered on the card (Req 3) */}
-        {index !== 0 && hoverImages && hoverImages.length > 1 && (
-            <>
-            <button 
+          <>
+            {/* Left arrow – nested completely inside the card, styled as a hole-punch */}
+            <button
               onClick={prevImage}
-              className={`absolute top-1/2 -translate-y-1/2 z-30 rounded-full flex items-center justify-center transform hover:scale-110 active:scale-95 transition-all text-gray-900 focus:outline-none ${
-                index === 1 
-                  ? 'left-[2px] w-[40px] h-[40px] bg-white shadow-[0_2px_6px_rgba(0,0,0,0.12)]' // Hovering perfectly inside the cutout
-                  : 'left-[-24px] w-12 h-12 bg-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]' // Normal edge
-              }`}
+              className="absolute z-30 flex items-center justify-center rounded-full bg-white hover:scale-105 active:scale-95 transition-all focus:outline-none text-gray-800"
+              style={{
+                width: 56,
+                height: 56,
+                left: 16, // Safely tucked inside the card boundary
+                top: '50%',
+                transform: 'translateY(-50%)',
+                boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.05)',
+              }}
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
-            <button 
+
+            {/* Right arrow */}
+            <button
               onClick={nextImage}
-              className={`absolute top-1/2 -translate-y-1/2 z-30 rounded-full flex items-center justify-center transform hover:scale-110 active:scale-95 transition-all text-gray-900 focus:outline-none ${
-                index === 1 
-                  ? 'right-[2px] w-[40px] h-[40px] bg-white shadow-[0_2px_6px_rgba(0,0,0,0.12)]' // Hovering perfectly inside the cutout
-                  : 'right-[-24px] w-12 h-12 bg-white shadow-[0_4px_12px_rgba(0,0,0,0.15)]' // Normal edge
-              }`}
+              className="absolute z-30 flex items-center justify-center rounded-full bg-white hover:scale-105 active:scale-95 transition-all focus:outline-none text-gray-800"
+              style={{
+                width: 56,
+                height: 56,
+                right: 16, // Safely tucked inside the card boundary
+                top: '50%',
+                transform: 'translateY(-50%)',
+                boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.05)',
+              }}
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M9 18l6-6-6-6" />
               </svg>
             </button>
-            </>
+          </>
         )}
 
         {index === 0 ? (
-           // Requirement 2: Image bigger at left, text at right for the first card
+           // First card: Image bigger at left, text at right
            <>
               <div className="w-[55%] h-full relative flex items-center justify-center">
                  {hoverImages && (
@@ -204,7 +205,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
               </div>
            </>
         ) : (
-           // Default hover state layout for other cards
+           // Other cards: text on top, content below
            <>
               <div className="flex flex-col items-center text-center w-full mb-4">
                 <p className="font-heading font-bold text-lg md:text-[22px] leading-tight text-white max-w-[80%]">
@@ -215,7 +216,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
               <div className="flex-1 relative flex items-center justify-center w-full">
                   {/* Slider Content */}
                   {uiType === 'image' && hoverImages && (
-                    <div className="relative w-full md:w-[90%] h-full flex items-center justify-center">
+                    <div className="relative w-full md:w-[75%] h-full flex items-center justify-center">
                       {hoverImages.map((img, idx) => (
                         <div 
                           key={img} 
